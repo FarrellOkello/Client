@@ -1,9 +1,5 @@
         import { Component } from "react";
 
-        // import {graphql} from 'react-apollo';
-        // import {flowRight as compose} from 'lodash';
-        // import {getAuthorsQuery,addBookMutation,getBooksQuery} from '../Queries/queries';
-
 
 
         class AddBook extends Component{
@@ -17,6 +13,7 @@
                 };
                 // console.log(this.state);
             }
+
 
 
             componentDidMount(){             
@@ -33,91 +30,75 @@
 
             }
 
-        //    displayAuthors(){
-        //        var data = this.props.getAuthorsQuery;
-        //        console.log(this.props);
-        //        if(data.loading){
-        //            return(<option disabled>Loading authors...</option>);
+            addBook(e){
+                var that = this;
+                e.preventDefault();
+                console.log('You have clicked on addBook')
+                let book_data ={
+                  name: this.refs.name.value,
+                  genre: this.refs.genre.value,
+                  author: this.refs.author.value
+                } 
+                var request = new Request(
+                  'http://127.0.0.1:4000/api/new-book',{
+                    method:'POST',
+                    headers: new Headers({'Content-Type':'application/json'}),
+                    body: JSON.stringify(book_data)
+                  });
+    
+    
+             // xmlhttprequest
+             console.log(this.state.books);
+             fetch(request)
+                  .then(function(response){
+                    response.json() 
+                    .then(function(data){
+                      console.log(data);
+                  let books = that.state.books;
+                      books.push(book_data);
+                  console.log(books);
+                  that.setState({
+                    books:books
+                  })
+                    })
+                  });
+    
+              }
+    
 
-
-        //        }else{
-        //            return data.authors.map(author => {
-        //                return(<option key={author.id} value={author.id}>{author.name}</option>);
-        //            })
-        //        }
-        //    }
-
-        // //button event
-        // submitForm(e){
-        //     e.preventDefault();
-                // this.props.addBookMutation({
-                //     variables:{
-                //         name:this.state.name,
-                //         genre: this.state.genre,
-                //         author: this.state.author
-                //     },
-                //     refetchQueries:[{query:getBooksQuery}]
-                // });
-
-        // }
-
-        changeHandler =  e => {
-            this.setState({[e.target.name]:e.target.value})
-        }
-
-        submitHandler = e =>{
-            e.preventDefault();
-            console.log(this.state);
-        }
 
 
         render(){
                 const { name , genre, author } = this.state;
                 return(<div>
-                    <form onSubmit={this.submitHandler} id="add-book" >
+                    <form ref="add-book" >
 
                         <div className="field">
                             <label>Book name:</label>
-                            <input type="text" name="name"
+                            <input type="text" ref="name"
                              onChange={(e)=>this.setState({name:e.target.value})}
                              value={name}></input>
                         </div>
 
                         <div className="field">
                             <label>Genre:</label>
-                            <input type="text" id="email" 
+                            <input type="text" ref="genre" 
                             onChange={(e)=>this.setState({genre:e.target.value})}
                             value={genre}></input>
                         </div>
 
                         <div className="field">
                             <label>Author:</label>
-                            <input type="text" id="author" 
+                            <input type="text" ref="author" 
                             onChange={(e)=>this.setState({author:e.target.value})}                                
                              value={author}></input>
                         </div>
 
-                        {/* <div className="field">
-                            <label>Author</label>onSubmit={this.submitForm.bind(this)}
-                        <select onChange={(e)=>this.setState({authorId:e.target.value})}><option>Select authors:</option>
-                        {this.displayAuthors()}</select>
-                        </div> */}
-                        <button>+</button>
+                        {<button onClick={this.addBook.bind(this)}>+ Book</button>}
                     </form>
-                    </div>    );
+                    </div> );
             }
 
         }
-    // }
-// }
+    
 export default (AddBook); 
-
-
-
-
-
-
-/*compose(
-    graphql(getAuthorsQuery,{name:"getAuthorsQuery"}),
-    graphql(addBookMutation,{name:"addBookMutation"})
-)*/

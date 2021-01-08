@@ -1,57 +1,49 @@
 import { Component } from "react";
-// import {graphql} from 'react-apollo';
-// import  {getBooksQuery} from '../Queries/queries';
-// import BookDetails from "./BookDetails";
-
 
 
 class BookList extends Component{
     constructor(){
         super();
         this.state = {
+            title:' My bookstore application',
             selected:null,
-             data:[]
-        }
-     
+            books: []
+          }
     }
 
     componentDidMount(){
-        fetch('items')
-        .then(res => res.json())
-        .then(data => this.setState({data},()=>console.log('Books fetched..',data)));      
-
+       console.log('Component has mounted the postgres data source')
+        var that = this;
+        fetch('http://127.0.0.1:4000/api/books')
+        .then(function(response){
+          response.json()
+          .then(function(data){
+            console.log(data);
+          let books = that.state.books;
+          books.concat(data);
+          that.setState({
+            books:data
+          })
+          })
+        })
     }
 
-     // displayBooks(){
-        // var data = this.props.data;
-        // if(data.loading){
-        //     return(<div>Loading Books.........</div>);
-        // }else{
-        //     return data.books.map(book =>{
-        //         return(
-        //             <li key={book.id} 
-                    
-        //             onClick={(e)=>{this.setState({selected:book.id})}}>{book.name}</li>
-            //     )
-            // })
-    //     }
-    // }
-    render(){    
+
+    render(){   
+        // let title = this.state.title;
+        let books = this.state.books;
+
         return(
             <div>
-            {/* <div> */}
-      {/* <h1>My reading list</h1> */}
+        
       <ul id="book-list">
-      {this.state.data.map(book => 
+      {books.map(book => 
       <li key={book.id} onClick={(e)=>{this.setState({selected:book.id})}}>
       {book.name}      
       </li>)
-      }
-      
-      </ul>
-    {/* </div> */}{/* <ul id="book-list"><li>{this.displayBooks()}</li></ul><BookDetails bookId={this.state.selected}/> */}
-                
-            </div>
+      }      
+      </ul>             
+      </div>
             
         );
         
@@ -59,15 +51,3 @@ class BookList extends Component{
 
 }
 export default (BookList);
-
-
-/* graphql(getBooksQuery,{
-            options:(props)=>{
-                return{
-                    variables:{
-                        id:props.bookId
-                    }
-                }
-            }
-        }
-            )*/
